@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1240" height="256" viewBox="0 0 310 64" role="img" aria-label="Kasawo Yaffe">
+    <defs>
+        <clipPath id="ky-clip-64"><circle cx="32" cy="32" r="30"/></clipPath>
+        <linearGradient id="ky-sky-64" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#2c5a3f"/><stop offset="1" stop-color="#1f3a2b"/>
+        </linearGradient>
+    </defs>
+    <circle cx="32" cy="32" r="30" fill="url(#ky-sky-64)"/>
+    <g clip-path="url(#ky-clip-64)">
+        <circle class="ky-sun" cx="43" cy="23" r="8" fill="#e0b24a"/>
+        <path class="ky-peak" d="M8 56 L34 17 L60 56 Z" fill="#a14d27"/>
+        <path class="ky-peak" d="M34 17 L60 56 L46 56 Z" fill="#7c3a1c"/>
+        <path class="ky-snow" d="M34 17 L29.2 24.2 L32.4 22.8 L34 25.4 L36 22.6 L38.8 24.2 Z" fill="#f7f1e6"/>
+        <path class="ky-hill" d="M-4 58 L17 31 L27 43 L31 39 L45 58 Z" fill="#4c8a5e"/>
+        <path class="ky-hill" d="M17 31 L27 43 L22 43 Z" fill="#3a7049"/>
+        <path d="M-2 51 C10 47 20 55 32 51 S54 46 66 50 L66 66 L-2 66 Z" fill="#1a3326"/>
+        <path class="ky-river" d="M4 52.5 C14 49 22 55.5 33 51.8 S52 48 61 51" fill="none" stroke="#f7f1e6" stroke-width="2.2" stroke-linecap="round"/>
+    </g>
+    <circle cx="32" cy="32" r="30.2" fill="none" stroke="#e0b24a" stroke-width="1.4" opacity=".7"/>
+  <text x="76" y="41" font-family="Fraunces, Georgia, serif" font-size="30" font-weight="700" fill="#1f3a2b">Kasawo <tspan fill="#8f4322" font-style="italic">Yaffe</tspan></text>
+</svg>
