@@ -1,0 +1,32 @@
+# Render Blueprint: a free review copy of the Kasawo Yaffe site.
+# In Render: New > Blueprint, pick this repository, then fill in ADMIN_EMAIL and ADMIN_PASSWORD.
+services:
+  - type: web
+    name: kasawo-yaffe
+    runtime: docker
+    plan: free
+    rootDir: site
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /up
+    envVars:
+      - key: APP_NAME
+        value: Kasawo Yaffe
+      - key: APP_ENV
+        value: staging          # loads the sample businesses; the local test admin is never created
+      - key: APP_DEBUG
+        value: "false"
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: ADMIN_EMAIL
+        sync: false             # you enter this in the Render dashboard
+      - key: ADMIN_PASSWORD
+        sync: false             # you enter this in the Render dashboard (10+ characters)

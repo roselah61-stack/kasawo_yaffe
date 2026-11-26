@@ -20,8 +20,8 @@ class DemoSeeder extends Seeder
 {
     public function run(): void
     {
-        // Local test admin only (never seeded in production). Create real admins with: php artisan kasawo:admin
-        User::updateOrCreate(['email' => 'admin@kasawo.test'], ['name' => 'Test Admin', 'password' => 'kasawo-local-admin', 'is_admin' => true]);
+        // Test admin on your own computer only, never on a hosted copy. Create real admins with: php artisan kasawo:admin
+        if (app()->isLocal()) User::updateOrCreate(['email' => 'admin@kasawo.test'], ['name' => 'Test Admin', 'password' => 'kasawo-local-admin', 'is_admin' => true]);
 
         $cat = Category::pluck('id', 'slug');
         $hours = ['Mon – Fri' => '8:00 – 19:00', 'Saturday' => '8:00 – 17:00', 'Sunday' => 'Closed'];

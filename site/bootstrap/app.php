@@ -13,6 +13,8 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias(['admin' => \App\Http\Middleware\EnsureAdmin::class]);
+        // Hosts like Render end HTTPS at their load balancer; trust it so links and assets use https://.
+        $middleware->trustProxies(at: '*');
         $middleware->redirectGuestsTo(fn () => route('admin.login'));
         $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })

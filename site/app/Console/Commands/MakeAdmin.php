@@ -18,8 +18,11 @@ class MakeAdmin extends Command
     public function handle(): int
     {
         $email = $this->argument('email') ?: text('Admin email', required: true);
-        $name = $this->option('name') ?: text('Full name', default: User::where('email', $email)->value('name') ?? '', required: true);
-        $pass = password('Password (min 10 characters)', required: true);
+        $name = $this->option('name') ?: ($this->option('no-interaction') ? 'Admin' : null) ?: text('Full name', default: User::where('email', $email)->value('name') ?? '', required: true);
+        // On a server with no keyboard (e.g. a Render deploy), take the password from ADMIN_PASSWORD.
+        $pass = $this->option('no-interaction') && getenv('ADMIN_PASSWORD')
+            ? getenv('ADMIN_PASSWORD')
+            : password('Password (min 10 characters)', required: true);
 
         $v = Validator::make(['email' => $email, 'password' => $pass], ['email' => 'email', 'password' => 'min:10']);
         if ($v->fails()) {
