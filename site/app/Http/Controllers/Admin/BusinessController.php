@@ -76,7 +76,7 @@ class BusinessController extends Controller
         }
 
         return redirect()->route('admin.businesses.index', ['status' => $business->status])
-            ->with('status', "<b>{$business->name}</b> saved.");
+            ->with('status', "<b>".e($business->name)."</b> saved.");
     }
 
     public function status(Request $request, Business $business): RedirectResponse
@@ -86,7 +86,7 @@ class BusinessController extends Controller
 
         $verb = ['approved' => 'is now live', 'rejected' => 'was rejected', 'pending' => 'is back in review'][$data['status']];
 
-        return back()->with('status', "<b>{$business->name}</b> {$verb}.");
+        return back()->with('status', "<b>".e($business->name)."</b> {$verb}.");
     }
 
     public function toggle(Request $request, Business $business): RedirectResponse
@@ -94,7 +94,7 @@ class BusinessController extends Controller
         $field = $request->validate(['field' => ['required', 'in:is_verified,is_featured']])['field'];
         $business->update([$field => ! $business->{$field}]);
 
-        return back()->with('status', "<b>{$business->name}</b> updated.");
+        return back()->with('status', "<b>".e($business->name)."</b> updated.");
     }
 
     public function destroy(Business $business): RedirectResponse
@@ -106,6 +106,6 @@ class BusinessController extends Controller
         }
         $business->delete();
 
-        return redirect()->route('admin.businesses.index')->with('status', "<b>{$business->name}</b> was deleted.");
+        return redirect()->route('admin.businesses.index')->with('status', "<b>".e($business->name)."</b> was deleted.");
     }
 }

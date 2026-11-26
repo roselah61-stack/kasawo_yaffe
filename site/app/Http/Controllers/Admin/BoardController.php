@@ -35,14 +35,14 @@ class BoardController extends Controller
         ]);
         $event && $event->exists ? $event->update($data) : $event = Event::create($data);
 
-        return redirect()->route('admin.events')->with('status', "<b>{$event->title}</b> saved.");
+        return redirect()->route('admin.events')->with('status', "<b>".e($event->title)."</b> saved.");
     }
 
     public function destroyEvent(Event $event): RedirectResponse
     {
         $event->delete();
 
-        return back()->with('status', "<b>{$event->title}</b> deleted.");
+        return back()->with('status', "<b>".e($event->title)."</b> deleted.");
     }
 
     public function notices(Request $request): View
@@ -64,7 +64,7 @@ class BoardController extends Controller
         $data['is_urgent'] = $request->boolean('is_urgent');
         $notice && $notice->exists ? $notice->update($data) : $notice = Notice::create($data);
 
-        return redirect()->route('admin.notices')->with('status', "<b>{$notice->title}</b> posted.");
+        return redirect()->route('admin.notices')->with('status', "<b>".e($notice->title)."</b> posted.");
     }
 
     public function destroyNotice(Notice $notice): RedirectResponse

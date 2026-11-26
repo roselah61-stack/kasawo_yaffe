@@ -34,21 +34,21 @@ class ArticleController extends Controller
     {
         $article = Article::create($this->data($request, new Article));
 
-        return redirect()->route('admin.articles.index')->with('status', "<b>{$article->title}</b> created.");
+        return redirect()->route('admin.articles.index')->with('status', "<b>".e($article->title)."</b> created.");
     }
 
     public function update(Request $request, Article $article): RedirectResponse
     {
         $article->update($this->data($request, $article));
 
-        return redirect()->route('admin.articles.index')->with('status', "<b>{$article->title}</b> saved.");
+        return redirect()->route('admin.articles.index')->with('status', "<b>".e($article->title)."</b> saved.");
     }
 
     public function destroy(Article $article): RedirectResponse
     {
         $article->delete();
 
-        return back()->with('status', "<b>{$article->title}</b> deleted.");
+        return back()->with('status', "<b>".e($article->title)."</b> deleted.");
     }
 
     private function data(Request $request, Article $article): array

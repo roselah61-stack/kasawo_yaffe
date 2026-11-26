@@ -7,22 +7,36 @@ const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const header = $('.site-header');
 const progress = $('.scroll-progress');
 const toTop = $('.to-top');
+const navLinks = $('#navLinks');
+// Page height is measured only on load/resize, never inside the scroll handler (that forced a layout every frame).
+let maxScroll = 0;
+const measure = () => { maxScroll = document.documentElement.scrollHeight - window.innerHeight; };
+let lastScrolled = null;
+let lastTop = null;
 const onScroll = () => {
     const y = window.scrollY;
-    header?.classList.toggle('scrolled', y > 40 || $('#navLinks')?.classList.contains('open'));
-    toTop?.classList.toggle('show', y > 900);
-    if (progress) {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        progress.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
-    }
+    const scrolled = y > 40 || !!navLinks?.classList.contains('open');
+    if (scrolled !== lastScrolled) { header?.classList.toggle('scrolled', scrolled); lastScrolled = scrolled; }
+    const top = y > 900;
+    if (top !== lastTop) { toTop?.classList.toggle('show', top); lastTop = top; }
+    if (progress) progress.style.transform = `scaleX(${maxScroll > 0 ? Math.min(y / maxScroll, 1) : 0})`;
 };
-window.addEventListener('scroll', onScroll, { passive: true });
+// At most one update per animation frame, however many scroll events fire.
+let ticking = false;
+window.addEventListener('scroll', () => {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => { onScroll(); ticking = false; });
+}, { passive: true });
+window.addEventListener('resize', () => { measure(); onScroll(); }, { passive: true });
+window.addEventListener('load', () => { measure(); onScroll(); });
+measure();
 onScroll();
 toTop?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
 
 // ---- Mobile menu
 $('.menu-btn')?.addEventListener('click', () => {
-    $('#navLinks')?.classList.toggle('open');
+    navLinks?.classList.toggle('open');
     onScroll();
 });
 
@@ -55,6 +69,8 @@ const io = new IntersectionObserver((entries) => {
         if (!e.isIntersecting) return;
         const el = e.target;
         el.classList.add('is-visible');
+        // Drop the GPU layer hint once the reveal transition is over.
+        el.addEventListener('transitionend', () => el.classList.add('revealed'), { once: true });
         const counters = $$('[data-count]', el);
         if (el.matches('[data-count]')) counters.push(el);
         counters.forEach(countUp);
@@ -84,8 +100,45 @@ if (slides.length > 1) {
         if (!reduceMotion) timer = setInterval(() => show(i + 1), 6500);
     };
     dots.forEach((d, n) => d.addEventListener('click', () => { show(n); play(); }));
-    play();
+
+    // Fetch the other slide photos only after the page has finished loading.
+    const loadRest = () => slides.forEach((s) => {
+        if (s.dataset.bg) { s.style.backgroundImage = `url('${s.dataset.bg}')`; delete s.dataset.bg; }
+    });
+    if (document.readyState === 'complete') loadRest(); else window.addEventListener('load', loadRest, { once: true });
+
+    // Pause the slideshow and zoom animation while the hero is scrolled out of view.
+    const hero = slides[0].parentElement;
+    new IntersectionObserver(([e]) => {
+        hero.classList.toggle('paused', !e.isIntersecting);
+        if (e.isIntersecting) play(); else clearInterval(timer);
+    }).observe(hero);
 }
+
+// ---- Pause the page-hero zoom when it is off screen
+$$('.page-hero').forEach((h) => new IntersectionObserver(([e]) => h.classList.toggle('paused', !e.isIntersecting)).observe(h));
+
+// ---- Faster page loads: prefetch a same-site page when the pointer rests on its link
+const prefetched = new Set();
+const prefetch = (a) => {
+    if (!a || a.origin !== location.origin || a.target || a.hasAttribute('download')) return;
+    const url = a.href.split('#')[0];
+    if (prefetched.has(url) || url === location.href.split('#')[0] || a.pathname.startsWith('/admin')) return;
+    prefetched.add(url);
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = url;
+    document.head.appendChild(link);
+};
+let hoverTimer;
+document.addEventListener('mouseover', (e) => {
+    const a = e.target.closest?.('a[href]');
+    if (!a) return;
+    clearTimeout(hoverTimer);
+    hoverTimer = setTimeout(() => prefetch(a), 65);
+}, { passive: true });
+document.addEventListener('mouseout', () => clearTimeout(hoverTimer), { passive: true });
+document.addEventListener('touchstart', (e) => prefetch(e.target.closest?.('a[href]')), { passive: true });
 
 // ---- Flash toast
 const toast = $('.toast');

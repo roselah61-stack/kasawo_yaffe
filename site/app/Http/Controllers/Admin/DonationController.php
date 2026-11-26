@@ -44,9 +44,9 @@ class DonationController extends Controller
         $donation->update(['status' => $status, 'confirmed_at' => $status === 'confirmed' ? now() : null]);
 
         $msg = [
-            'confirmed' => "Payment confirmed for <b>{$donation->reference}</b>. It now counts towards the goal.",
-            'failed' => "<b>{$donation->reference}</b> marked as not received.",
-            'pending' => "<b>{$donation->reference}</b> moved back to pending.",
+            'confirmed' => "Payment confirmed for <b>".e($donation->reference)."</b>. It now counts towards the goal.",
+            'failed' => "<b>".e($donation->reference)."</b> marked as not received.",
+            'pending' => "<b>".e($donation->reference)."</b> moved back to pending.",
         ][$status];
 
         return back()->with('status', $msg);

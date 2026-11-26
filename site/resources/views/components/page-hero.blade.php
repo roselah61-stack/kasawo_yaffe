@@ -1,4 +1,7 @@
 @props(['image', 'title', 'crumb' => null, 'height' => null, 'position' => 'center'])
+@push('preload')
+    <link rel="preload" as="image" href="{{ asset($image) }}" fetchpriority="high">
+@endpush
 <section class="page-hero" @if ($height) style="min-height:{{ $height }}" @endif>
     <div class="hero-bg" style="background-image:url('{{ asset($image) }}');background-position:{{ $position }}"></div>
     <div class="wrap hero-in">

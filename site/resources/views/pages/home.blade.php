@@ -1,6 +1,10 @@
 @extends('layouts.app')
 @section('overlay_header', true)
 
+@push('preload')
+    <link rel="preload" as="image" href="{{ asset('images/hero-sezibwa.jpg') }}" fetchpriority="high">
+@endpush
+
 @section('content')
 @php
     $slides = [
@@ -13,7 +17,12 @@
 
 <section class="hero">
     @foreach ($slides as $n => [$img, $credit])
-        <div class="hero-slide {{ $n === 0 ? 'on' : '' }}" style="background-image:url('{{ asset($img) }}')" data-credit="{{ $credit }}"></div>
+        {{-- Only the first slide loads with the page; the rest are fetched after load (see app.js). --}}
+        @if ($n === 0)
+            <div class="hero-slide on" style="background-image:url('{{ asset($img) }}')" data-credit="{{ $credit }}"></div>
+        @else
+            <div class="hero-slide" data-bg="{{ asset($img) }}" data-credit="{{ $credit }}"></div>
+        @endif
     @endforeach
     <div class="wrap hero-in">
         <div class="greet">Tukwaniriza: you are welcome</div>

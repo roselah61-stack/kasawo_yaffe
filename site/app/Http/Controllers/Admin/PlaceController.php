@@ -34,21 +34,21 @@ class PlaceController extends Controller
     {
         $place = Place::create($this->data($request, new Place));
 
-        return redirect()->route('admin.places.index')->with('status', "<b>{$place->name}</b> added.");
+        return redirect()->route('admin.places.index')->with('status', "<b>".e($place->name)."</b> added.");
     }
 
     public function update(Request $request, Place $place): RedirectResponse
     {
         $place->update($this->data($request, $place));
 
-        return redirect()->route('admin.places.index')->with('status', "<b>{$place->name}</b> saved.");
+        return redirect()->route('admin.places.index')->with('status', "<b>".e($place->name)."</b> saved.");
     }
 
     public function destroy(Place $place): RedirectResponse
     {
         $place->delete();
 
-        return back()->with('status', "<b>{$place->name}</b> removed.");
+        return back()->with('status', "<b>".e($place->name)."</b> removed.");
     }
 
     private function data(Request $request, Place $place): array

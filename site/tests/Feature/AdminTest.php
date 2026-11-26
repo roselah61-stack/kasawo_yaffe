@@ -67,6 +67,19 @@ class AdminTest extends TestCase
         $this->assertTrue($b->fresh()->is_featured);
     }
 
+    public function test_names_from_the_public_are_escaped_in_admin_messages(): void
+    {
+        $b = Business::where('status', 'pending')->firstOrFail();
+        $b->update(['name' => '<script>alert(1)</script>Shop']);
+
+        $this->actingAs($this->admin())->from('/admin/businesses')
+            ->patch("/admin/businesses/{$b->id}/status", ['status' => 'approved']);
+
+        $this->get('/admin/businesses')
+            ->assertDontSee('<script>alert(1)</script>', false)
+            ->assertSee('&lt;script&gt;alert(1)&lt;/script&gt;Shop', false);
+    }
+
     public function test_editing_a_business_saves_details_products_and_photo(): void
     {
         Storage::fake('public');
@@ -74,7 +87,7 @@ class AdminTest extends TestCase
 
         $this->actingAs($this->admin())->put("/admin/businesses/{$b->id}", [
             'name' => 'Renamed Shop', 'category_id' => $b->category_id, 'type' => 'both', 'status' => 'approved',
-            'is_verified' => '1', 'image' => UploadedFile::fake()->image('new.jpg'),
+            'is_verified' => '1', 'image' => UploadedFile::fake()->image('new.png'),
             'products' => [['name' => 'Item A', 'price' => 1000], ['name' => '', 'price' => '']],
         ])->assertRedirect();
 
@@ -112,7 +125,7 @@ class AdminTest extends TestCase
 
         $this->post('/admin/articles', [
             'title' => 'Draft tips', 'topic' => 'Farming', 'excerpt' => 'Short', 'body' => '## Hello', 'author' => 'Me', 'read_minutes' => 3,
-            'image' => UploadedFile::fake()->image('a.jpg'),
+            'image' => UploadedFile::fake()->image('a.png'),
         ])->assertRedirect('/admin/articles');
         $article = Article::where('title', 'Draft tips')->firstOrFail();
         $this->assertNull($article->published_at); // "published" switch was off

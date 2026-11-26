@@ -10,7 +10,8 @@
     <meta property="og:image" content="{{ asset('images/hero-sezibwa.jpg') }}">
     <meta name="theme-color" content="#1f3a2b">
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
-    <link rel="preconnect" href="https://fonts.bunny.net">
+    @stack('preload')
+    <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
     <link href="https://fonts.bunny.net/css?family=fraunces:400,400i,600,700,700i|inter:400,500,600,700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>

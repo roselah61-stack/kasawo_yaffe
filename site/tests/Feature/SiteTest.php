@@ -41,7 +41,7 @@ class SiteTest extends TestCase
             'owner_name' => 'Test Owner',
             'phone' => '+256 700 000 000',
             'location' => 'Trading centre',
-            'photos' => [UploadedFile::fake()->image('shop.jpg')],
+            'photos' => [UploadedFile::fake()->image('shop.png')],
         ])->assertRedirect('/marketplace');
 
         $business = Business::where('name', 'Test Bakery')->firstOrFail();
